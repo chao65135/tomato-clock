@@ -54,6 +54,8 @@ SPA 路由和基础安全响应头已经通过 `vercel.json` 配置。
 
 ## Cloudflare Workers（静态资源托管，已在本仓库配置）
 
+当前生产地址：<https://tomato-clock.dingchao-cn.workers.dev/>（Worker 名称 `tomato-clock`）
+
 仓库根目录的 `wrangler.jsonc` 描述了静态资源托管方式：
 
 - `assets.directory = ./dist`：上传 `npm run build` 的产物

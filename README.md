@@ -1,6 +1,10 @@
 # Tomato Clock
 
+[English](README.en.md) | 简体中文
+
 一个先聚焦 Web 端的番茄钟工具。
+
+线上地址：<https://tomato-clock.dingchao-cn.workers.dev/>
 
 ## 功能
 
@@ -47,6 +51,8 @@ npm run format:check   # 检查代码格式
 ```
 
 ## 部署
+
+当前线上地址：<https://tomato-clock.dingchao-cn.workers.dev/>
 
 项目已包含 Vercel、Netlify 和 Cloudflare（Workers / Pages）所需配置。详细步骤见：
 
