@@ -96,12 +96,27 @@ export interface TimerStorage {
 
 export function createTimerStorage(storage: StorageLike): TimerStorage {
   return {
-    load: () => parseTimerState(storage.getItem(TIMER_STORAGE_KEY)),
+    load: () => {
+      try {
+        return parseTimerState(storage.getItem(TIMER_STORAGE_KEY))
+      } catch {
+        // localStorage 被禁用（隐私模式、安全策略）时按无数据处理
+        return null
+      }
+    },
     save: (state) => {
-      storage.setItem(TIMER_STORAGE_KEY, serializeTimerState(state))
+      try {
+        storage.setItem(TIMER_STORAGE_KEY, serializeTimerState(state))
+      } catch {
+        // 写入失败（配额、禁用存储）不应中断计时
+      }
     },
     clear: () => {
-      storage.removeItem(TIMER_STORAGE_KEY)
+      try {
+        storage.removeItem(TIMER_STORAGE_KEY)
+      } catch {
+        // 同上，忽略即可
+      }
     },
   }
 }

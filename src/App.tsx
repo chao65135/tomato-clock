@@ -1,4 +1,5 @@
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import TimerEngine from './components/TimerEngine'
 import HomePage from './pages/HomePage'
 import SettingsPage from './pages/SettingsPage'
@@ -8,6 +9,17 @@ import { useThemeStore } from './stores/useThemeStore'
 function App() {
   const theme = useThemeStore((state) => state.theme)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const location = useLocation()
+
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      '/': '计时 · Tomato Clock',
+      '/settings': '设置 · Tomato Clock',
+      '/stats': '统计 · Tomato Clock',
+    }
+
+    document.title = titles[location.pathname] ?? 'Tomato Clock'
+  }, [location.pathname])
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">

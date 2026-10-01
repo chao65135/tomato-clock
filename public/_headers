@@ -3,4 +3,31 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.sentry.io; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+# 带内容哈希的构建产物：一年强缓存
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML 与 Service Worker 相关文件：必须每次重新验证，保证版本更新及时生效
+/
+  Cache-Control: no-cache
+
+/settings
+  Cache-Control: no-cache
+
+/stats
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/sw.js
+  Cache-Control: no-cache
+
+/registerSW.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
