@@ -88,19 +88,31 @@ npm run deploy:preview  # 等价于 npx wrangler preview，创建 Preview 部署
 
 因为 `wrangler` 是 devDependency，CI 与 Cloudflare 构建流程执行 `npm ci` 时会一并安装它（含 workerd 二进制），首次安装体积会明显增大。
 
-### 关于 `public/_redirects`
+### 禁止添加 `public/_redirects`
 
-Cloudflare 的静态资源引擎会把该文件里的 `/* /index.html 200` 判定为无效规则（构建日志出现 `Infinite loop detected in this rule and has been ignored`）并忽略它。这是预期行为：
+仓库**刻意不包含** `public/_redirects`。Cloudflare 会把 `/* /index.html 200` 判为无限循环，并在 `wrangler deploy` 上传阶段的 API 校验中直接拒绝，构建日志以 `Failed: error occurred while running deploy command` 结束：
 
-- Workers 部署下 SPA 回退由 `wrangler.jsonc` 的 `assets.not_found_handling` 负责，不依赖该规则；
-- 该文件保留是为了兼容 Cloudflare Pages / 其它平台的 SPA 回退写法，不影响静态资源与 `sw.js`、`manifest.webmanifest` 的正常返回。
+```
+Invalid _redirects configuration:
+Line 1: Infinite loop detected in this rule. [code: 100324]
+```
+
+注意 `npx wrangler deploy --dry-run` **检测不出**这个问题：该校验发生在 Cloudflare API 端，dry-run 只做本地打包，即使本地通过、真实部署仍会失败，因此不能把它当成唯一的发布前验证。
+
+各平台的 SPA 回退彼此独立，都不依赖该文件：
+
+- Cloudflare Workers：`wrangler.jsonc` 的 `assets.not_found_handling = single-page-application`
+- Netlify：`netlify.toml` 的 `[[redirects]]`
+- Vercel：`vercel.json` 的 `rewrites`
+
+`public/_headers` 则要保留：格式合法不会被拒绝，用于下发安全响应头。
 
 ## Cloudflare Pages（备选）
 
 1. 构建命令使用 `npm run build`。
 2. 输出目录使用 `dist`。
 3. 配置 `VITE_SENTRY_DSN` 和 `VITE_APP_ENV`。
-4. SPA 回退依赖 `public/_redirects`；若该规则被忽略（见上文告警），请改用 Workers 方式部署或自行补充 `404.html`。
+4. SPA 回退需自行配置：仓库已不含 `public/_redirects`（原因见上文，Pages 同为 Workers 引擎，该文件同样会被拒绝），请在 Pages 项目里配置重定向规则或补充 `404.html`。
 5. `public/_headers` 对 Pages 同样生效。
 
 ## Sentry

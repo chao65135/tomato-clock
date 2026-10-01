@@ -9,8 +9,9 @@
     // npm run build 的输出目录
     "directory": "./dist",
     // 未命中静态资源时返回 index.html，交给 React Router 处理前端路由
-    // 必须显式声明：Cloudflare 引擎会忽略 public/_redirects 里同类的
-    // "/* /index.html 200" 规则（判定为 infinite loop），回退只能靠这里
+    // 必须显式声明，且仓库刻意不放 public/_redirects：
+    // "/* /index.html 200" 会被 Cloudflare 判为无限循环并在部署时拒绝
+    // （Invalid _redirects configuration, code 100324），SPA 回退只能靠这里
     "not_found_handling": "single-page-application",
   },
 }
