@@ -71,6 +71,23 @@ SPA 路由和基础安全响应头已经通过 `vercel.json` 配置。
 
 构建镜像默认 Node.js 24，满足 `vite` 的版本要求，无需额外设置 `NODE_VERSION`。
 
+### 本地 CLI 部署（可选）
+
+`wrangler` 已作为 devDependency 安装，可以不走 Git 集成、直接从本地部署：
+
+```bash
+npx wrangler login      # 首次使用需在浏览器完成授权
+npm run build           # 生成 dist
+npm run deploy          # 等价于 npx wrangler deploy，发布到生产
+npm run deploy:preview  # 等价于 npx wrangler preview，创建 Preview 部署
+```
+
+部署命令读取仓库根目录的 `wrangler.jsonc`，不需要额外参数。建议先用 `npx wrangler deploy --dry-run` 校验配置与产物。
+
+`npm run preview` 仍是 `vite preview`（本地预览 `dist`），与 Cloudflare 的 Preview 部署不是同一件事，因此后者命名为 `deploy:preview`。
+
+因为 `wrangler` 是 devDependency，CI 与 Cloudflare 构建流程执行 `npm ci` 时会一并安装它（含 workerd 二进制），首次安装体积会明显增大。
+
 ### 关于 `public/_redirects`
 
 Cloudflare 的静态资源引擎会把该文件里的 `/* /index.html 200` 判定为无效规则（构建日志出现 `Infinite loop detected in this rule and has been ignored`）并忽略它。这是预期行为：

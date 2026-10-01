@@ -33,15 +33,17 @@ npm run dev
 ## 常用命令
 
 ```bash
-npm run dev          # 启动开发服务器
-npm run build        # 类型检查并构建生产版本
-npm run preview      # 预览生产构建
-npm test             # 运行单元测试
-npm run test:watch   # 监听模式运行单元测试
-npm run lint         # 运行 Oxlint
-npm run typecheck    # 仅运行 TypeScript 类型检查
-npm run format       # 使用 Prettier 格式化代码
-npm run format:check # 检查代码格式
+npm run dev            # 启动开发服务器
+npm run build          # 类型检查并构建生产版本
+npm run preview        # 本地预览生产构建
+npm run deploy         # 部署到 Cloudflare Workers
+npm run deploy:preview # 创建 Cloudflare Preview 部署
+npm test               # 运行单元测试
+npm run test:watch     # 监听模式运行单元测试
+npm run lint           # 运行 Oxlint
+npm run typecheck      # 仅运行 TypeScript 类型检查
+npm run format         # 使用 Prettier 格式化代码
+npm run format:check   # 检查代码格式
 ```
 
 ## 部署
