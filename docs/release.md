@@ -4,7 +4,7 @@
 
 - Node.js 24
 - npm
-- 一个静态托管平台账号：Vercel、Netlify 或 Cloudflare Pages
+- 一个静态托管平台账号：Vercel、Netlify、Cloudflare Workers 或 Cloudflare Pages
 - 可选：Sentry DSN
 
 ## 本地发布前检查
@@ -52,12 +52,39 @@ SPA 路由和基础安全响应头已经通过 `vercel.json` 配置。
 
 `netlify.toml` 已包含 SPA redirect、缓存和基础安全响应头。
 
-## Cloudflare Pages
+## Cloudflare Workers（静态资源托管，已在本仓库配置）
+
+仓库根目录的 `wrangler.jsonc` 描述了静态资源托管方式：
+
+- `assets.directory = ./dist`：上传 `npm run build` 的产物
+- `assets.not_found_handling = single-page-application`：未命中静态资源时回退 `index.html`，交给 React Router 处理前端路由
+
+在 Cloudflare 控制台把仓库连接到 Workers（Workers & Pages → Create → Workers）后填写：
+
+1. Build command 使用 `npm run build`。
+2. Deploy command 保持默认的 `npx wrangler deploy`。
+3. Preview command 保持默认的 `npx wrangler preview`。
+4. Root directory 保持仓库根目录；Worker 名称建议填写 `tomato-clock`，与 `wrangler.jsonc` 中的 `name` 保持一致。
+5. 配置 `VITE_SENTRY_DSN` 和 `VITE_APP_ENV`。
+
+安全响应头（CSP、X-Frame-Options、Referrer-Policy 等）由 `public/_headers` 提供，内容与 `netlify.toml` 保持一致；`vercel.json` 不涉及该文件。
+
+构建镜像默认 Node.js 24，满足 `vite` 的版本要求，无需额外设置 `NODE_VERSION`。
+
+### 关于 `public/_redirects`
+
+Cloudflare 的静态资源引擎会把该文件里的 `/* /index.html 200` 判定为无效规则（构建日志出现 `Infinite loop detected in this rule and has been ignored`）并忽略它。这是预期行为：
+
+- Workers 部署下 SPA 回退由 `wrangler.jsonc` 的 `assets.not_found_handling` 负责，不依赖该规则；
+- 该文件保留是为了兼容 Cloudflare Pages / 其它平台的 SPA 回退写法，不影响静态资源与 `sw.js`、`manifest.webmanifest` 的正常返回。
+
+## Cloudflare Pages（备选）
 
 1. 构建命令使用 `npm run build`。
 2. 输出目录使用 `dist`。
 3. 配置 `VITE_SENTRY_DSN` 和 `VITE_APP_ENV`。
-4. 项目内已有的 `public/_redirects` 会处理 SPA 路由。
+4. SPA 回退依赖 `public/_redirects`；若该规则被忽略（见上文告警），请改用 Workers 方式部署或自行补充 `404.html`。
+5. `public/_headers` 对 Pages 同样生效。
 
 ## Sentry
 

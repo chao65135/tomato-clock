@@ -46,7 +46,7 @@ npm run format:check # 检查代码格式
 
 ## 部署
 
-项目已包含 Vercel、Netlify 和 Cloudflare Pages 所需配置。详细步骤见：
+项目已包含 Vercel、Netlify 和 Cloudflare（Workers / Pages）所需配置。详细步骤见：
 
 - [发布流程](docs/release.md)
 - [隐私说明](docs/privacy-policy.md)

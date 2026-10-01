@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Cloudflare Wrangler 本地开发状态
+.wrangler
+
 # Environment files
 .env
 .env.*

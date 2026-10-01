@@ -1,0 +1,16 @@
+{
+  // Cloudflare Workers / Pages 静态资源部署配置
+  // 本项目是纯前端 SPA，没有后端 Worker 脚本，仅托管 dist 静态产物
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "tomato-clock",
+  // 建议保持为“今天”的日期，以便使用最新的运行时默认行为
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    // npm run build 的输出目录
+    "directory": "./dist",
+    // 未命中静态资源时返回 index.html，交给 React Router 处理前端路由
+    // 必须显式声明：Cloudflare 引擎会忽略 public/_redirects 里同类的
+    // "/* /index.html 200" 规则（判定为 infinite loop），回退只能靠这里
+    "not_found_handling": "single-page-application",
+  },
+}
